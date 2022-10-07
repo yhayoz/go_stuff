@@ -42,13 +42,39 @@ func main() {
 		`Structure:`, structure, "\n",
 		`HLQ:`, hlq, "\n",
 		`App Name:`, app, "\n",
-		`Stages:`, stages)
-	create_structure(app)
+		`Stages:`, arr)
+	create_structure(app, arr, hlq, structure)
 }
 
-func create_structure(app string) {
-	// First create all Directories
-	fmt.Println("hello", app)
-	os.MkdirAll(fmt.Sprintf("../deploy/base/%s", app), os.ModePerm)
+func contains(arr []string, str string) bool {
+
+	for _, v := range arr {
+		if v == str {
+
+			fmt.Println("Exists")
+			return true
+		}
+	}
+
+	fmt.Println("does not exist")
+	return true
+}
+
+func create_structure(app string, arr []string, hlq string, structure string) {
+	contains(arr, "test")
+	if structure == "simple" {
+		// First create base Directorie
+		os.MkdirAll(fmt.Sprintf("../deploy/stages/base/%s", app), os.ModePerm)
+
+		for i := 0; i < len(arr); i++ {
+			os.MkdirAll(fmt.Sprintf("../deploy/stages/%s", arr[i]), os.ModePerm)
+		}
+	}
+
+	if structure == "complex" {
+		// First create all Directories
+		fmt.Println("hello", app)
+		os.MkdirAll(fmt.Sprintf("../deploy/base/%s", app), os.ModePerm)
+	}
 
 }

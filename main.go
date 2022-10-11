@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strings"
+	"text/template"
 )
 
 func main() {
@@ -38,13 +40,35 @@ func main() {
 	create_structure(arr, hlq, app, structure)
 }
 
+type stuff struct {
+	AppName string
+	HLQ     string
+	STAGE   string
+}
+
 func create_structure(arr []string, hlq *string, app *string, structure *string) {
+
 	if *structure == "simple" {
 		// First create base Directorie
 		os.MkdirAll(fmt.Sprintf("../deploy/stages/base/%s", *app), os.ModePerm)
 
 		for i := 0; i < len(arr); i++ {
+			loop := stuff{
+				AppName: *app,
+				HLQ:     *hlq,
+				STAGE:   arr[i],
+			}
+
 			os.MkdirAll(fmt.Sprintf("../deploy/stages/%s/%s", arr[i], *app), os.ModePerm)
+
+			templateRef, err := template.ParseFiles("templates/kustomization.goyaml")
+			if err != nil {
+				log.Fatalln(err)
+			}
+			err = templateRef.ExecuteTemplate(os.Stdout, "kustomization.goyaml", loop)
+			if err != nil {
+				log.Fatalln(err)
+			}
 		}
 	}
 
